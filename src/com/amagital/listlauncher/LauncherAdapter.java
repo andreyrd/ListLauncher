@@ -1,6 +1,8 @@
 package com.amagital.listlauncher;
 
 import android.app.Activity;
+import android.os.*;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -21,6 +23,7 @@ public class LauncherAdapter extends BaseAdapter {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Debug.log("Refreshed apps.");
                         notifyDataSetChanged();
                     }
                 });
