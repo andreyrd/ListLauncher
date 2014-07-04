@@ -15,21 +15,19 @@ public class LauncherAdapter extends BaseAdapter {
         this.application = application;
         this.activity = activity;
 
-        if (!application.isLoaded()) {
-            LauncherApplication.Callback callback = new LauncherApplication.Callback() {
-                @Override
-                public void onLoad() {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyDataSetChanged();
-                        }
-                    });
-                }
-            };
+        LauncherApplication.Callback callback = new LauncherApplication.Callback() {
+            @Override
+            public void onLoad() {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        };
 
-            application.setCallback(callback);
-        }
+        application.setCallback(callback);
     }
 
     @Override
