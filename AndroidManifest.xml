@@ -3,7 +3,6 @@
           package="com.amagital.listlauncher">
     <uses-sdk android:minSdkVersion="8"/>
     <application
-            android:name=".LauncherApplication"
             android:icon="@drawable/icon"
             android:label="@string/app_name"
             android:launchMode="singleTask"
@@ -12,7 +11,9 @@
             android:theme="@style/AutoTheme">
         <activity android:name=".LauncherActivity"
                   android:label="@string/app_name"
+			      android:clearTaskOnLaunch="true"
                   android:launchMode="singleTask"
+				  android:noHistory="true"
                   android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,11 +21,5 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <receiver android:name=".InstallReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>
