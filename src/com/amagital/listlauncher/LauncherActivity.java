@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,14 +115,14 @@ public class LauncherActivity extends Activity {
 	}
 
 	private void loadAppInfo() {
-		Thread thread = new Thread() {
+		AsyncTask<Void, Integer, Void> task = new AsyncTask<Void, Integer, Void>() {
 			@Override
-			public void run() {
+			protected Void doInBackground(Void... params) {
 				PackageManager pm = getPackageManager();
 
 				List<ApplicationInfo> packages = pm.getInstalledApplications(0);
 
-				final ArrayList<AppInfo> updateList = new ArrayList<AppInfo>(packages.size());
+				ArrayList<AppInfo> updateList = new ArrayList<AppInfo>(packages.size());
 
 				for (ApplicationInfo info : packages) {
 					Intent intent = pm.getLaunchIntentForPackage(info.packageName);
@@ -139,18 +140,18 @@ public class LauncherActivity extends Activity {
 				}
 
 				Collections.sort(updateList);
+				appInfoList = updateList;
 
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						appInfoList = updateList;
-						listAdapter.notifyDataSetChanged();
-					}
-				});
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				listAdapter.notifyDataSetChanged();
 			}
 		};
 
-		thread.start();
+		task.execute();
 	}
 
 	private class LauncherAdapter extends BaseAdapter {
@@ -192,5 +193,10 @@ public class LauncherActivity extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			loadAppInfo();
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		// Do nothing. Hehe.
 	}
 }
