@@ -52,7 +52,7 @@ public class LauncherActivity extends Activity {
 		@Override
 		public int compareTo(Object another) {
 			if (another instanceof AppInfo) {
-				return this.name.compareTo(((AppInfo) another).name);
+				return this.name.toLowerCase().compareTo(((AppInfo) another).name.toLowerCase());
 			} else {
 				return 0;
 			}
@@ -87,8 +87,6 @@ public class LauncherActivity extends Activity {
 				startActivity(appInfoList.get(position).getIntent());
 			}
 		});
-
-
     }
 
 	private ChangeReceiver changeReceiver;
