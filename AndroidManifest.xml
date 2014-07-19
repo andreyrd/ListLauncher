@@ -14,7 +14,8 @@
 			      android:clearTaskOnLaunch="true"
                   android:launchMode="singleTask"
 				  android:noHistory="true"
-                  android:excludeFromRecents="true">
+                  android:excludeFromRecents="true"
+				  android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />
