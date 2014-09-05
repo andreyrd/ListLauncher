@@ -8,11 +8,18 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class LauncherActivity extends Activity {
 	private ArrayList<AppInfo> appInfoList;
@@ -74,6 +81,26 @@ public class LauncherActivity extends Activity {
 		unregisterReceiver(changeReceiver);
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = new MenuInflater(this);
+		inflater.inflate(R.menu.menu_main, menu);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_main_settings:
+				Intent intent = new Intent(this, SettingsActivity.class);
+				startActivity(intent);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
 	private void loadAppInfo() {
 		AsyncTask<Void, Integer, Void> task = new AsyncTask<Void, Integer, Void>() {
 			@Override
@@ -115,6 +142,36 @@ public class LauncherActivity extends Activity {
 		};
 
 		task.execute();
+	}
+
+	@Override
+	public void startActivity(Intent intent) {
+		super.startActivity(intent);
+
+		int animIn = -1;
+		int animOut = -1;
+
+	    String anim = PreferenceManager.getDefaultSharedPreferences(this).getString("launch_anim", "default");
+
+		switch (anim) {
+			case "none":
+				animIn = 0;
+				animOut = 0;
+				break;
+			case "fade":
+				animIn = R.anim.fade_in;
+				animOut = R.anim.fade_out;
+				break;
+			case "zoom_in":
+				animIn = R.anim.zoom_in;
+				animOut = 0;
+		}
+
+		if (animIn >= 0 && animOut >= 0) {
+			overridePendingTransition(animIn, animOut);
+		} else {
+			overridePendingTransition(android.R.anim., 0);
+		}
 	}
 
 	private class ChangeReceiver extends BroadcastReceiver {
