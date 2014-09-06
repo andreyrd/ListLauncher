@@ -1,12 +1,14 @@
 package com.amagital.listlauncher;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.*;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -33,7 +35,7 @@ public class LauncherActivity extends Activity {
         setContentView(R.layout.launcher);
 
 		// Initialize the array with 0 capacity (will ensureCapacity later)
-		appInfoList = new ArrayList<AppInfo>(0);
+		appInfoList = new ArrayList<>(0);
 
 		ListView listView = (ListView) findViewById(R.id.launcher_list);
 		listAdapter = new LauncherAdapter(this, appInfoList);
@@ -72,7 +74,35 @@ public class LauncherActivity extends Activity {
 		registerReceiver(changeReceiver, filter);
 
 		loadAppInfo();
-	}
+
+        int animIn = -1;
+        int animOut = -1;
+
+        String anim = PreferenceManager.getDefaultSharedPreferences(this).getString("launch_anim", "default");
+
+        switch (anim) {
+            case "none":
+                animIn = 0;
+                animOut = 0;
+                break;
+            case "fade":
+                animIn = R.anim.fade_in;
+                animOut = R.anim.fade_out;
+                break;
+            case "zoom_in":
+                animIn = 0;
+                animOut = R.anim.zoom_out;
+                break;
+            case "zoom_out":
+                animIn = R.anim.zoom_in;
+                animOut = R.anim.fade_out;
+                break;
+        }
+
+        if (animIn >= 0 && animOut >= 0) {
+            overridePendingTransition(animIn, animOut);
+        }
+    }
 
 	@Override
 	protected void onPause() {
@@ -146,33 +176,44 @@ public class LauncherActivity extends Activity {
 
 	@Override
 	public void startActivity(Intent intent) {
-		super.startActivity(intent);
-
 		int animIn = -1;
 		int animOut = -1;
 
 	    String anim = PreferenceManager.getDefaultSharedPreferences(this).getString("launch_anim", "default");
 
-		switch (anim) {
-			case "none":
-				animIn = 0;
-				animOut = 0;
-				break;
-			case "fade":
-				animIn = R.anim.fade_in;
-				animOut = R.anim.fade_out;
-				break;
-			case "zoom_in":
-				animIn = R.anim.zoom_in;
-				animOut = 0;
-		}
+        switch (anim) {
+            case "none":
+                animIn = 0;
+                animOut = 0;
+                break;
+            case "fade":
+                animIn = R.anim.fade_in;
+                animOut = R.anim.fade_out;
+                break;
+            case "zoom_in":
+                animIn = R.anim.zoom_in;
+                animOut = R.anim.activity_open_exit;
+                break;
+            case "zoom_out":
+                animIn = 0;
+                animOut = R.anim.zoom_out;
+                break;
+        }
 
-		if (animIn >= 0 && animOut >= 0) {
-			overridePendingTransition(animIn, animOut);
-		} else {
-			overridePendingTransition(android.R.anim., 0);
-		}
-	}
+        if (animIn < 0 && animOut < 0) {
+            animIn = R.anim.activity_open_enter;
+            animOut = R.anim.activity_open_exit;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            // Cleaner way of doing animations for 4.1 and higher
+            ActivityOptions options = ActivityOptions.makeCustomAnimation(this, animIn, animOut);
+            startActivity(intent, options.toBundle());
+        } else {
+            super.startActivity(intent);
+            overridePendingTransition(animIn, animOut);
+        }
+    }
 
 	private class ChangeReceiver extends BroadcastReceiver {
 		@Override

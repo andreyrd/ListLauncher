@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AutoTheme" parent="android:Theme.Black.NoTitleBar" />
+    <style name="LauncherTheme" parent="android:Theme.Holo">
+        <item name="android:windowAnimationStyle">@style/Animation.Launcher</item>
+    </style>
+    <style name="Animation.Launcher" parent="android:Animation.Activity" >
+        <item name="android:activityOpenEnterAnimation">@anim/activity_close_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/activity_close_exit</item>
+        <item name="android:taskOpenEnterAnimation">@anim/activity_close_enter</item>
+        <item name="android:taskOpenExitAnimation">@anim/activity_close_exit</item>
+        <item name="android:taskToFrontEnterAnimation">@anim/activity_close_enter</item>
+        <item name="android:taskToFrontExitAnimation">@anim/activity_close_exit</item>
+    </style>
 </resources>
