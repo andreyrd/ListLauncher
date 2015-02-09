@@ -1,5 +1,6 @@
 package com.amagital.launcher.list;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
@@ -31,6 +32,8 @@ public class LauncherActivity extends Activity {
 	private ArrayList<AppInfo> appInfoList;
 
 	private LauncherAdapter listAdapter;
+
+    private boolean prefShowActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,19 @@ public class LauncherActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+        prefShowActionBar = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("show_action_bar", false);
+
+        // Hide action bar depending on settings
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            if (prefShowActionBar) {
+                actionBar.show();
+            } else {
+                actionBar.hide();
+            }
+        }
 
 		// Receiver for package changes
 		changeReceiver = new ChangeReceiver();
@@ -162,6 +178,14 @@ public class LauncherActivity extends Activity {
 						updateList.add(appInfo);
 					}
 				}
+
+                if (!prefShowActionBar) {
+                    AppInfo appInfo = new AppInfo();
+                    appInfo.setName(getString(R.string.app_settings));
+                    appInfo.setIntent(new Intent(LauncherActivity.this, SettingsActivity.class));
+                    appInfo.setIcon(getResources().getDrawable(R.drawable.ic_launcher));
+                    updateList.add(appInfo);
+                }
 
 				Collections.sort(updateList);
 				appInfoList = updateList;
