@@ -95,6 +95,6 @@ class LauncherAdapter extends BaseAdapter implements SectionIndexer {
 
 	@Override
 	public int getSectionForPosition(int i) {
-		return 0;
+		return appInfoList.get(i).getName().toUpperCase().charAt(0) - 'A';
 	}
 }
