@@ -1,5 +1,6 @@
 package com.amagital.launcher.list;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -9,8 +10,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -68,9 +74,26 @@ public class LauncherActivity extends Activity {
 
 	private ChangeReceiver changeReceiver;
 
-	@Override
+    @Override
 	protected void onResume() {
 		super.onResume();
+
+        // Show wallpaper according to settings
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("show_wallpaper", false)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                LayerDrawable wallpaper = new LayerDrawable(new Drawable[] {
+                        getWallpaper(),
+                        new ColorDrawable(getResources().getColor(R.color.wallpaper_darken))
+                });
+
+                findViewById(R.id.launcher_list).setBackground(wallpaper);
+            } else {
+                findViewById(R.id.launcher_list).setBackgroundDrawable(getWallpaper());
+            }
+        } else {
+            findViewById(R.id.launcher_list).setBackgroundColor(Color.TRANSPARENT);
+        }
 
         prefShowActionBar = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean("show_action_bar", false);

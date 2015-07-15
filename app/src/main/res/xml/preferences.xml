@@ -9,6 +9,12 @@
         android:summary="@string/pref_show_action_bar_summary"
         android:defaultValue="@bool/pref_show_action_bar_default" />
 
+	<CheckBoxPreference
+		android:key="show_wallpaper"
+		android:title="@string/pref_show_wallpaper_title"
+		android:summary="@string/pref_show_wallpaper_summary"
+		android:defaultValue="@bool/pref_show_wallpaper_default" />
+
 	<ListPreference
 		android:key="launch_anim"
 		android:title="@string/pref_launch_anim_title"
