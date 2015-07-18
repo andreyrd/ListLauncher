@@ -90,7 +90,11 @@ class LauncherAdapter extends BaseAdapter implements SectionIndexer {
 
 	@Override
 	public int getPositionForSection(int i) {
-		return positionMap.get(sections[i]);
+		if (i >= sections.length) {
+			return getCount() - 1;
+		} else {
+            return positionMap.get(sections[i]);
+		}
 	}
 
 	@Override
