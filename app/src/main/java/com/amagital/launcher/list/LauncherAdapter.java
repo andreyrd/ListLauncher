@@ -1,6 +1,7 @@
 package com.amagital.launcher.list;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,6 +10,8 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -99,6 +102,9 @@ class LauncherAdapter extends BaseAdapter implements SectionIndexer {
 
 	@Override
 	public int getSectionForPosition(int i) {
-		return appInfoList.get(i).getName().toUpperCase().charAt(0) - 'A';
+		// Slower but will be replaced in the future with AlphabetIndexer and Cursor
+		String letter = appInfoList.get(i).getName().substring(0, 1).toUpperCase();
+		int index = Arrays.binarySearch(sections, letter);
+		return index > 0 && index < sections.length ? index : 0;
 	}
 }
