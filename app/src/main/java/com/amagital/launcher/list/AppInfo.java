@@ -1,7 +1,11 @@
 package com.amagital.launcher.list;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.widget.BaseAdapter;
 
 /**
  * The info necessary to show a list item for the app.
@@ -43,18 +47,48 @@ class AppInfo implements Comparable {
 	}
 
     /**
-     * @return  app icon drawable
+	 * Returns loaded icon or null. If icon is not loaded, it will load in the background and notify
+	 * the passed adapter when finished.
+	 *
+	 * @param context used to get package manager
+	 * @param adapter adapter we can notify when finished
+     * @return        app icon drawable
      */
-	public Drawable getIcon() {
+	public Drawable getIcon(Context context, BaseAdapter adapter) {
+		if (icon == null) {
+			loadIcon(context, adapter);
+		}
+
 		return icon;
 	}
 
-    /**
-     * @param icon  app icon drawable
-     */
-	public void setIcon(Drawable icon) {
-		this.icon = icon;
+	/**
+	 * Loads app icon in the background.
+	 *
+	 * @param context used to get package manager
+	 * @param adapter adapter we can notify when finished
+	 */
+	private void loadIcon(final Context context, final BaseAdapter adapter) {
+		AsyncTask<Void, Void, Drawable> task = new AsyncTask<Void, Void, Drawable>() {
+			@Override
+			protected Drawable doInBackground(Void... params) {
+				try {
+					return context.getPackageManager().getActivityIcon(intent);
+				} catch (PackageManager.NameNotFoundException e) {
+					return context.getPackageManager().getDefaultActivityIcon();
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Drawable drawable) {
+				icon = drawable;
+				adapter.notifyDataSetChanged();
+			}
+		};
+
+		task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
+
 
 	/**
 	 * Compares app names by alphabetical order.

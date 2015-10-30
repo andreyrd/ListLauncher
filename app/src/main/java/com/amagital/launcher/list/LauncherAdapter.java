@@ -1,7 +1,6 @@
 package com.amagital.launcher.list;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +69,7 @@ class LauncherAdapter extends BaseAdapter implements SectionIndexer {
 		AppInfo info = appInfoList.get(position);
 
 		nameView.setText(info.getName());
-		iconView.setImageDrawable(info.getIcon());
+		iconView.setImageDrawable(info.getIcon(context, this));
 
 		return view;
 	}

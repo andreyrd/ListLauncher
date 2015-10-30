@@ -1,6 +1,5 @@
 package com.amagital.launcher.list;
 
-import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -196,7 +194,6 @@ public class LauncherActivity extends Activity {
 
 						appInfo.setName(name);
 						appInfo.setIntent(intent);
-						appInfo.setIcon(info.loadIcon(pm));
 
 						updateList.add(appInfo);
 					}
@@ -206,7 +203,6 @@ public class LauncherActivity extends Activity {
                     AppInfo appInfo = new AppInfo();
                     appInfo.setName(getString(R.string.app_settings));
                     appInfo.setIntent(new Intent(LauncherActivity.this, SettingsActivity.class));
-                    appInfo.setIcon(getResources().getDrawable(R.drawable.ic_launcher));
                     updateList.add(appInfo);
                 }
 
