@@ -26,7 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.GridView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +35,8 @@ import java.util.List;
 public class LauncherActivity extends Activity {
 	private ArrayList<AppInfo> appInfoList;
 
-	private LauncherAdapter listAdapter;
+	private GridView gridView;
+	private LauncherAdapter gridAdapter;
 
     private boolean prefShowActionBar;
 
@@ -48,20 +49,20 @@ public class LauncherActivity extends Activity {
 		// Initialize the array with 0 capacity (will ensureCapacity later)
 		appInfoList = new ArrayList<>(0);
 
-		ListView listView = (ListView) findViewById(R.id.launcher_list);
-		listAdapter = new LauncherAdapter(this, appInfoList);
+		gridView = (GridView) findViewById(R.id.launcher_list);
+		gridAdapter = new LauncherAdapter(this, appInfoList);
 
-		listView.setAdapter(listAdapter);
+		gridView.setAdapter(gridAdapter);
 
 		// Launch the app intent when the item is clicked
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				startActivity(appInfoList.get(position).getIntent());
 			}
 		});
 
-		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+		gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int i, long id) {
 				showDetailsDialog(appInfoList.get(i));
@@ -76,36 +77,6 @@ public class LauncherActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-        // Show wallpaper according to settings
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean("show_wallpaper", false)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                LayerDrawable wallpaper = new LayerDrawable(new Drawable[] {
-                        getWallpaper(),
-                        new ColorDrawable(getResources().getColor(R.color.wallpaper_darken))
-                });
-
-                findViewById(R.id.launcher_list).setBackground(wallpaper);
-            } else {
-                findViewById(R.id.launcher_list).setBackgroundDrawable(getWallpaper());
-            }
-        } else {
-            findViewById(R.id.launcher_list).setBackgroundColor(Color.TRANSPARENT);
-        }
-
-        prefShowActionBar = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean("show_action_bar", false);
-
-        // Hide action bar depending on settings
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null) {
-            if (prefShowActionBar) {
-                actionBar.show();
-            } else {
-                actionBar.hide();
-            }
-        }
-
 		// Receiver for package changes
 		changeReceiver = new ChangeReceiver();
 		IntentFilter filter = new IntentFilter();
@@ -114,35 +85,81 @@ public class LauncherActivity extends Activity {
 		filter.addDataScheme("package");
 		registerReceiver(changeReceiver, filter);
 
+		loadPrefsWallpaper();
+		loadPrefsActionBar();
+		loadPrefsAnimation();
+        loadPrefsColumns();
+
 		loadAppInfo();
+	}
 
-        int animIn = -1;
-        int animOut = -1;
+	private void loadPrefsWallpaper() {
+		if (PreferenceManager.getDefaultSharedPreferences(this)
+				.getBoolean("show_wallpaper", false)) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+				LayerDrawable wallpaper = new LayerDrawable(new Drawable[] {
+						getWallpaper(),
+						new ColorDrawable(getResources().getColor(R.color.wallpaper_darken))
+				});
 
-        String anim = PreferenceManager.getDefaultSharedPreferences(this).getString("launch_anim", "default");
+				findViewById(R.id.launcher_list).setBackground(wallpaper);
+			} else {
+				findViewById(R.id.launcher_list).setBackgroundDrawable(getWallpaper());
+			}
+		} else {
+			findViewById(R.id.launcher_list).setBackgroundColor(Color.TRANSPARENT);
+		}
+	}
 
-        switch (anim) {
-            case "none":
-                animIn = 0;
-                animOut = 0;
-                break;
-            case "fade":
-                animIn = R.anim.fade_in;
-                animOut = R.anim.fade_out;
-                break;
-            case "zoom_in":
-                animIn = 0;
-                animOut = R.anim.zoom_out;
-                break;
-            case "zoom_out":
-                animIn = R.anim.zoom_in;
-                animOut = R.anim.fade_out;
-                break;
-        }
+	private void loadPrefsActionBar() {
+		prefShowActionBar = PreferenceManager.getDefaultSharedPreferences(this)
+				.getBoolean("show_action_bar", false);
 
-        if (animIn >= 0 && animOut >= 0) {
-            overridePendingTransition(animIn, animOut);
-        }
+		ActionBar actionBar = getActionBar();
+		if (actionBar != null) {
+			if (prefShowActionBar) {
+				actionBar.show();
+			} else {
+				actionBar.hide();
+			}
+		}
+	}
+
+	private void loadPrefsAnimation() {
+		int animIn = -1;
+		int animOut = -1;
+
+		String anim = PreferenceManager.getDefaultSharedPreferences(this).getString("launch_anim", "default");
+
+		switch (anim) {
+			case "none":
+				animIn = 0;
+				animOut = 0;
+				break;
+			case "fade":
+				animIn = R.anim.fade_in;
+				animOut = R.anim.fade_out;
+				break;
+			case "zoom_in":
+				animIn = 0;
+				animOut = R.anim.zoom_out;
+				break;
+			case "zoom_out":
+				animIn = R.anim.zoom_in;
+				animOut = R.anim.fade_out;
+				break;
+		}
+
+		if (animIn >= 0 && animOut >= 0) {
+			overridePendingTransition(animIn, animOut);
+		}
+	}
+
+    private void loadPrefsColumns() {
+        String columns = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("list_columns", "1");
+
+        gridView.setNumColumns(Integer.valueOf(columns));
     }
 
 	@Override
@@ -214,7 +231,7 @@ public class LauncherActivity extends Activity {
 
 			@Override
 			protected void onPostExecute(Void aVoid) {
-				listAdapter.notifyDataSetChanged(appInfoList);
+				gridAdapter.notifyDataSetChanged(appInfoList);
 			}
 		};
 

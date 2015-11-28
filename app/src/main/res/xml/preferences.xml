@@ -3,6 +3,13 @@
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
+	<EditTextPreference
+		android:key="list_columns"
+		android:title="@string/pref_list_columns_title"
+		android:summary="@string/pref_list_columns_summary"
+		android:defaultValue="@integer/pref_list_columns_default"
+		android:inputType="number" />
+
     <CheckBoxPreference
         android:key="show_action_bar"
         android:title="@string/pref_show_action_bar_title"
