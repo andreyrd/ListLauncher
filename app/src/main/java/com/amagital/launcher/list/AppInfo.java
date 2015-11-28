@@ -86,7 +86,7 @@ class AppInfo implements Comparable {
 			}
 		};
 
-		task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		task.execute();
 	}
 
 
