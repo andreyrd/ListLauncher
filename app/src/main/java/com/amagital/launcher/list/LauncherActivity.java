@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -27,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +35,7 @@ import java.util.List;
 public class LauncherActivity extends Activity {
 	private ArrayList<AppInfo> appInfoList;
 
+    private ImageView backgroundView;
 	private GridView gridView;
 	private LauncherAdapter gridAdapter;
 
@@ -49,6 +50,7 @@ public class LauncherActivity extends Activity {
 		// Initialize the array with 0 capacity (will ensureCapacity later)
 		appInfoList = new ArrayList<>(0);
 
+        backgroundView = (ImageView) findViewById(R.id.launcher_bg);
 		gridView = (GridView) findViewById(R.id.launcher_list);
 		gridAdapter = new LauncherAdapter(this, appInfoList);
 
@@ -95,19 +97,16 @@ public class LauncherActivity extends Activity {
 
 	private void loadPrefsWallpaper() {
 		if (PreferenceManager.getDefaultSharedPreferences(this)
-				.getBoolean("show_wallpaper", false)) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-				LayerDrawable wallpaper = new LayerDrawable(new Drawable[] {
-						getWallpaper(),
-						new ColorDrawable(getResources().getColor(R.color.wallpaper_darken))
-				});
+				.getBoolean("show_wallpaper", true)) {
 
-				findViewById(R.id.launcher_list).setBackground(wallpaper);
-			} else {
-				findViewById(R.id.launcher_list).setBackgroundDrawable(getWallpaper());
-			}
+            LayerDrawable wallpaper = new LayerDrawable(new Drawable[] {
+                    getWallpaper(),
+                    new ColorDrawable(getResources().getColor(R.color.wallpaper_darken))
+            });
+
+            backgroundView.setImageDrawable(wallpaper);
 		} else {
-			findViewById(R.id.launcher_list).setBackgroundColor(Color.TRANSPARENT);
+			backgroundView.setImageDrawable(null);
 		}
 	}
 
