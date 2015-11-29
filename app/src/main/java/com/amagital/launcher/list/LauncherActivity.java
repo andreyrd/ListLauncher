@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +38,8 @@ public class LauncherActivity extends Activity {
 
     private ImageView backgroundView;
 	private GridView gridView;
+	private ProgressBar progressView;
+
 	private LauncherAdapter gridAdapter;
 
     private boolean prefShowActionBar;
@@ -52,8 +55,9 @@ public class LauncherActivity extends Activity {
 
         backgroundView = (ImageView) findViewById(R.id.launcher_bg);
 		gridView = (GridView) findViewById(R.id.launcher_list);
-		gridAdapter = new LauncherAdapter(this, appInfoList);
+		progressView = (ProgressBar) findViewById(R.id.launcher_progress);
 
+		gridAdapter = new LauncherAdapter(this, appInfoList);
 		gridView.setAdapter(gridAdapter);
 
 		// Launch the app intent when the item is clicked
@@ -230,6 +234,11 @@ public class LauncherActivity extends Activity {
 
 			@Override
 			protected void onPostExecute(Void aVoid) {
+				// Hide the progress view for the rest of this activity's life cycle. It only needs
+				// to be shown on an empty list, which will only happen when the activity is
+				// recreated.
+				progressView.setVisibility(View.GONE);
+
 				gridAdapter.notifyDataSetChanged(appInfoList);
 			}
 		};
