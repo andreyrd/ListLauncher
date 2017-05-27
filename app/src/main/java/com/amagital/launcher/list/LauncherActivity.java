@@ -206,7 +206,9 @@ public class LauncherActivity extends Activity {
 					Intent intent = pm.getLaunchIntentForPackage(info.packageName);
 					String name = info.loadLabel(pm).toString();
 
-					if (intent != null && name != null) {
+					if (intent != null&& name != null
+							&& !info.packageName.equals(BuildConfig.APPLICATION_ID)) {
+
 						intent.setAction(Intent.ACTION_MAIN);
 						intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
