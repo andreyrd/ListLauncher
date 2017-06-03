@@ -15,4 +15,12 @@
     <string name="pref_show_wallpaper_title">Show Wallpaper</string>
     <string name="pref_show_wallpaper_summary">Show system wallpaper instead of a black background behind the list.</string>
     <bool name="pref_show_wallpaper_default">true</bool>
+
+    <string name="pref_translucent_status_title">Translucent Status Bar</string>
+    <string name="pref_translucent_status_summary">Status bar at the top will be translucent on devices with 4.4+.</string>
+    <bool name="pref_translucent_status">false</bool>
+
+    <string name="pref_translucent_navigation_title">Translucent Navigation Bar</string>
+    <string name="pref_translucent_navigation_summary">Navigation bar at the bottom will be translucent on devices with 4.4+.</string>
+    <bool name="pref_translucent_navigation">false</bool>
 </resources>

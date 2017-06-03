@@ -22,6 +22,18 @@
 		android:summary="@string/pref_show_wallpaper_summary"
 		android:defaultValue="@bool/pref_show_wallpaper_default" />
 
+	<CheckBoxPreference
+        android:key="translucent_status"
+        android:title="@string/pref_translucent_status_title"
+        android:summary="@string/pref_translucent_status_summary"
+        android:defaultValue="@bool/pref_translucent_status" />
+
+    <CheckBoxPreference
+        android:key="translucent_navigation"
+        android:title="@string/pref_translucent_navigation_title"
+        android:summary="@string/pref_translucent_navigation_summary"
+        android:defaultValue="@bool/pref_translucent_navigation" />
+
 	<ListPreference
 		android:key="launch_anim"
 		android:title="@string/pref_launch_anim_title"

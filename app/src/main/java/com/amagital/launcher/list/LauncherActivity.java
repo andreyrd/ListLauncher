@@ -20,13 +20,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
@@ -95,6 +99,7 @@ public class LauncherActivity extends Activity {
 		loadPrefsActionBar();
 		loadPrefsAnimation();
         loadPrefsColumns();
+		loadPrefsTranslucent();
 
 		loadAppInfo();
 	}
@@ -165,6 +170,45 @@ public class LauncherActivity extends Activity {
         gridView.setNumColumns(Integer.valueOf(columns));
     }
 
+    private void loadPrefsTranslucent() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window window = getWindow();
+
+            boolean translucentStatus = PreferenceManager
+                    .getDefaultSharedPreferences(this)
+                    .getBoolean("translucent_status", false);
+
+            if (translucentStatus) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            }
+
+            boolean translucentNavigation = PreferenceManager
+                    .getDefaultSharedPreferences(this)
+                    .getBoolean("translucent_navigation", false);
+
+            if (translucentNavigation) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+				gridView.setPadding(0, gridView.getPaddingTop(), 0, getNavigationBarHeight());
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+				gridView.setPadding(0, gridView.getPaddingTop(), 0, 0);
+            }
+
+            // Padding on top is needed if either one is set, since that makes the grid go outside
+			// of decor
+			if (translucentStatus || translucentNavigation) {
+				gridView.setPadding(0, getStatusBarHeight(), 0, gridView.getPaddingBottom());
+				gridView.setClipToPadding(false);
+			} else {
+				gridView.setPadding(0, 0, 0, 0);
+				gridView.setClipToPadding(true);
+			}
+        }
+    }
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -192,6 +236,22 @@ public class LauncherActivity extends Activity {
 		}
 	}
 
+    private int getStatusBarHeight() {
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
+
+    private int getNavigationBarHeight() {
+		int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+		if (resourceId > 0) {
+			return getResources().getDimensionPixelSize(resourceId);
+		}
+		return 0;
+	}
+
 	private void loadAppInfo() {
 		AsyncTask<Void, Integer, Void> task = new AsyncTask<Void, Integer, Void>() {
 			@Override
@@ -206,7 +266,7 @@ public class LauncherActivity extends Activity {
 					Intent intent = pm.getLaunchIntentForPackage(info.packageName);
 					String name = info.loadLabel(pm).toString();
 
-					if (intent != null&& name != null
+					if (intent != null && name != null
 							&& !info.packageName.equals(BuildConfig.APPLICATION_ID)) {
 
 						intent.setAction(Intent.ACTION_MAIN);
