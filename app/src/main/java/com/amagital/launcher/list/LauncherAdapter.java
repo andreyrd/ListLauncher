@@ -38,7 +38,7 @@ class LauncherAdapter extends BaseAdapter implements SectionIndexer {
 		List<String> lettersList = new ArrayList<>();
 
 		for (int i=0; i<appInfoList.size(); i++) {
-			String letter = appInfoList.get(i).getName().substring(0, 1).toUpperCase();
+			String letter = appInfoList.get(i).name.substring(0, 1).toUpperCase();
 
 			if (!lettersSet.contains(letter)) {
 				lettersSet.add(letter);
@@ -68,7 +68,7 @@ class LauncherAdapter extends BaseAdapter implements SectionIndexer {
 
 		AppInfo info = appInfoList.get(position);
 
-		nameView.setText(info.getName());
+		nameView.setText(info.name);
 		iconView.setImageDrawable(info.getIcon(context, this));
 
 		return view;
@@ -101,7 +101,7 @@ class LauncherAdapter extends BaseAdapter implements SectionIndexer {
 	@Override
 	public int getSectionForPosition(int i) {
 		// Slower but will be replaced in the future with AlphabetIndexer and Cursor
-		String letter = appInfoList.get(i).getName().substring(0, 1).toUpperCase();
+		String letter = appInfoList.get(i).name.substring(0, 1).toUpperCase();
 		int index = Arrays.binarySearch(sections, letter);
 		return index > 0 && index < sections.length ? index : 0;
 	}

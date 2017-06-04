@@ -6,24 +6,27 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 
-/**
- * Created by Andrey on 9/2/2014.
- */
 public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+	private Settings settings;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
 
-		Preference translucentStatusPreference = findPreference("translucent_status");
-		Preference translucentNavigationPreference = findPreference("translucent_navigation");
+		settings = new Settings(this);
 
+		Preference translucentStatusPreference = findPreference(Settings.KEY_TRANSLUCENT_STATUS);
+		Preference translucentNavigationPreference = findPreference(Settings.KEY_TRANSLUCENT_NAVIGATION);
+
+		// Disable on versions of Android that don't support it
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
 			translucentStatusPreference.setEnabled(false);
 			translucentNavigationPreference.setEnabled(false);
 		}
 
-		updateActionBar();
+		updateActionBarPref();
 	}
 
 	@Override
@@ -40,19 +43,17 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-		updateActionBar();
+		updateActionBarPref();
 	}
 
-	private void updateActionBar() {
-		boolean translucentStatus = getPreferenceScreen().getSharedPreferences().getBoolean("translucent_status", false);
-		boolean translucentNavigation = getPreferenceScreen().getSharedPreferences().getBoolean("translucent_navigation", false);
-
+	/** Disables the action bar if translucent status/navigation is enabled. */
+	private void updateActionBarPref() {
 		Preference actionBarPreference = findPreference("show_action_bar");
 
-		if (translucentStatus || translucentNavigation) {
+		if (settings.getTranslucentStatus() || settings.getTranslucentNavigation()) {
 			// Need to disable action bar!
 			actionBarPreference.setEnabled(false);
-			getPreferenceScreen().getSharedPreferences().edit().putBoolean("show_action_bar", false).apply();
+			settings.setShowActionBar(false);
 		} else {
 			actionBarPreference.setEnabled(true);
 		}
