@@ -8,8 +8,8 @@ android {
         applicationId "com.amagital.launcher.list"
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 8
-        versionName "1.5.2"
+        versionCode 9
+        versionName "1.6.1"
     }
     buildTypes {
         release {
