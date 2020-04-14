@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
     buildToolsVersion '25.0.3'
 
     defaultConfig {
         applicationId "com.andreyrd.launcher.list"
         minSdkVersion 11
-        targetSdkVersion 26
-        versionCode 9
-        versionName "1.6.1"
+        targetSdkVersion 28
+        versionCode 10
+        versionName "2.0.0"
     }
     buildTypes {
         release {
