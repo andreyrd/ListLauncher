@@ -1,4 +1,4 @@
-package com.amagital.launcher.list;
+package com.andreyrd.launcher.list;
 
 /** Delegate for responding to AppChangeReceiver events */
 public interface AppChangeReceiverDelegate {

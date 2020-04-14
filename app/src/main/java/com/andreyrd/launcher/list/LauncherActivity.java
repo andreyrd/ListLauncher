@@ -1,4 +1,4 @@
-package com.amagital.launcher.list;
+package com.andreyrd.launcher.list;
 
 import android.app.ActionBar;
 import android.app.Activity;

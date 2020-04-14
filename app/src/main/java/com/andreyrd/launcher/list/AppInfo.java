@@ -1,4 +1,4 @@
-package com.amagital.launcher.list;
+package com.andreyrd.launcher.list;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +17,8 @@ class AppInfo implements Comparable<AppInfo> {
 
 	/** Name of the app shown in the list. */
 	public String name;
+
+	public String packageName;
 
 	/**
 	 * Compares app names by alphabetical order.

@@ -1,4 +1,4 @@
-package com.amagital.launcher.list;
+package com.andreyrd.launcher.list;
 
 import android.content.Context;
 import android.content.SharedPreferences;

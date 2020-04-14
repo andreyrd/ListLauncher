@@ -1,7 +1,6 @@
-package com.amagital.launcher.list;
+package com.andreyrd.launcher.list;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.util.Pair;
 
 public class Utils {
